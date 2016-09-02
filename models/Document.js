@@ -40,7 +40,7 @@ Document.add({
 	alternativeTitle: { type: String, collapse: true },
 	subtitle: { type: String, collapse: true },
 	publisher: { type: String },
-	publicationYear: { type: Types.Date, default: Date.now, required: true, initial: true, note: 'Only year is selected from date'},
+	publicationYear: { type: Types.Date, default: Date.now, required: true, index: true, initial: true, note: 'Only year is selected from date'},
 	subjects: { type: Types.Textarea, note: 'Separate your different subjects with semicolon. \n\nExample: `subject one;subject two`'},
 	//Contributors
 	contributors: { type: Types.Relationship, ref: 'Contributor', many: true },
@@ -56,9 +56,6 @@ Document.add({
 	versionMinor: { type: Types.Number, default: 0 }
 	// Azure File
 
-	// author: { type: Types.Relationship, ref: 'User', index: true },
-	// publishedDate: { type: Types.Date, index: true, dependsOn: { state: 'published' } },
-	// categories: { type: Types.Relationship, ref: 'Document', many: true }
 });
 
 Document.schema.virtual('version').get(function() {
