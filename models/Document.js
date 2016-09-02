@@ -2,10 +2,29 @@ var keystone = require('keystone');
 var Types = keystone.Field.Types;
 var shortid = require('shortid');
 var langs = require('iso-639-1');
+var azure = require('keystone-storage-adapter-azure');
 /**
  * Document Model
  * ==========
  */
+
+/**
+ * Azure Storage Configuration
+ */
+var storage = new keystone.Storage({
+  adapter: azure,
+  azure: {
+    // accountName: 'myaccount', // required; defaults to env.AZURE_STORAGE_ACCOUNT
+    // accountKey: 'secret', // required; defaults to env.AZURE_STORAGE_ACCESS_KEY
+    // container: 'mycontainer', // required; defaults to env.AZURE_STORAGE_CONTAINER
+    generateFilename: keystone.Storage.randomFilename, // default
+  },
+  schema: {
+    container: true, // optional; store the referenced container in the database
+    etag: true, // optional; store the etag for the resource
+    url: true, // optional; generate & store a public URL
+  },
+});
 
 function getLanguangeSelections(){
 	return langs.getLanguages(langs.getAllCodes()).map(
@@ -53,9 +72,9 @@ Document.add({
 	resourceType: { type: String, required: false },
 	resourceTypeGeneral: { type: Types.Select, options: ['Book', 'Book Chapter', 'Book Prospectus', 'Book Review', 'Book Series', 'Conference Abstract', 'Conference Paper', 'Conference Poster', 'Conference Program', 'Dictionary Entry', 'Disclosure', 'Dissertation', 'Edited Book', 'Encyclopedia Entry', 'Funding Submission', 'Journal Article', 'Journal Issue', 'License', 'Magazine Article', 'Manual', 'Newsletter Article', 'Newspaper Article', 'Online Resource', 'Patent', 'Registered Copyright', 'Report', 'Research Tool', 'Supervised Student Publication', 'Tenure-Promotion', 'Test', 'Trademark', 'Translation', 'University Academic Unit', 'Website', 'Working Paper']}, 
 	versionMajor: { type: Types.Number, default: 1 },
-	versionMinor: { type: Types.Number, default: 0 }
+	versionMinor: { type: Types.Number, default: 0 },
 	// Azure File
-
+	file: { type: Types.File, storage: storage, initial: true }
 });
 
 Document.schema.virtual('version').get(function() {
