@@ -34,23 +34,26 @@ Document.add({
 		emptyOption: false,
 		hidden: true
 	},
+	creators: { type: Types.Relationship, ref: 'Creator', many: true, required: true, initial: true },
 	title: { type: String, required: true, initial: true },
 	translatedTitle: { type: String, collapse: true },
 	alternativeTitle: { type: String, collapse: true },
 	subtitle: { type: String, collapse: true },
 	publisher: { type: String },
-	subject: { type: Types.Textarea, note: 'Separate your different subjects with semicolon '},
+	publicationYear: { type: Types.Date, default: Date.now, required: true, initial: true, note: 'Only year is selected from date'},
+	subjects: { type: Types.Textarea, note: 'Separate your different subjects with semicolon. \n\nExample: `subject one;subject two`'},
 	//Contributors
+	contributors: { type: Types.Relationship, ref: 'Contributor', many: true },
 	dateAccepted: { type: Types.Date, collapse: true },
 	dateAvailable: { type: Types.Date, collapse: true },
 	dateCreated: { type: Types.Date, collapse: true },
 	dateIssued: { type: Types.Date, collapse: true },
 	dateSubmitted: { type: Types.Date, collapse: true },
-	language: { type: Types.Select, options: getLanguangeSelections()},
+	language: { type: Types.Select, options: getLanguangeSelections() },
 	resourceType: { type: String, required: false },
 	resourceTypeGeneral: { type: Types.Select, options: ['Book', 'Book Chapter', 'Book Prospectus', 'Book Review', 'Book Series', 'Conference Abstract', 'Conference Paper', 'Conference Poster', 'Conference Program', 'Dictionary Entry', 'Disclosure', 'Dissertation', 'Edited Book', 'Encyclopedia Entry', 'Funding Submission', 'Journal Article', 'Journal Issue', 'License', 'Magazine Article', 'Manual', 'Newsletter Article', 'Newspaper Article', 'Online Resource', 'Patent', 'Registered Copyright', 'Report', 'Research Tool', 'Supervised Student Publication', 'Tenure-Promotion', 'Test', 'Trademark', 'Translation', 'University Academic Unit', 'Website', 'Working Paper']}, 
-	versionMajor: { type: Types.Number },
-	versionMinor: { type: Types.Number }
+	versionMajor: { type: Types.Number, default: 1 },
+	versionMinor: { type: Types.Number, default: 0 }
 	// Azure File
 
 	// author: { type: Types.Relationship, ref: 'User', index: true },
@@ -58,9 +61,9 @@ Document.add({
 	// categories: { type: Types.Relationship, ref: 'Document', many: true }
 });
 
-Document.schema.virtual('content.full').get(function() {
-	return this.content.extended || this.content.brief;
+Document.schema.virtual('version').get(function() {
+	return this.versionMajor + '.' + this.versionMinor; 
 });
 
-Document.defaultColumns = 'title, state|20%, author|20%, publishedDate|20%';
+Document.defaultColumns = 'title, creators';
 Document.register();
