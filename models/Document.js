@@ -2,10 +2,29 @@ var keystone = require('keystone');
 var Types = keystone.Field.Types;
 var shortid = require('shortid');
 var langs = require('iso-639-1');
+var azure = require('keystone-storage-adapter-azure');
 /**
  * Document Model
  * ==========
  */
+
+/**
+ * Azure Storage Configuration
+ */
+var storage = new keystone.Storage({
+  adapter: azure,
+  azure: {
+    // accountName: 'myaccount', // required; defaults to env.AZURE_STORAGE_ACCOUNT
+    // accountKey: 'secret', // required; defaults to env.AZURE_STORAGE_ACCESS_KEY
+    // container: 'mycontainer', // required; defaults to env.AZURE_STORAGE_CONTAINER
+    generateFilename: keystone.Storage.randomFilename, // default
+  },
+  schema: {
+    container: true, // optional; store the referenced container in the database
+    etag: true, // optional; store the etag for the resource
+    url: true, // optional; generate & store a public URL
+  },
+});
 
 function getLanguangeSelections(){
 	return langs.getLanguages(langs.getAllCodes()).map(
@@ -44,7 +63,7 @@ Document.add({
 	alternativeTitle: { type: String, collapse: true },
 	subtitle: { type: String, collapse: true },
 	publisher: { type: String },
-	publicationYear: { type: Types.Date, default: Date.now, required: true, initial: true, note: 'Only year is selected from date'},
+	publicationYear: { type: Types.Date, default: Date.now, required: true, index: true, initial: true, note: 'Only year is selected from date'},
 	subjects: { type: Types.Textarea, note: 'Separate your different subjects with semicolon. \n\nExample: `subject one;subject two`'},
 	//Contributors
 	contributors: { type: Types.Relationship, ref: 'Contributor', many: true },
@@ -59,7 +78,9 @@ Document.add({
 	resourceTypeFreeText: { type: String, label: 'Resource Type', dependsOn: { freeTextResourceType: true }},
 	resourceTypeGeneral: { type: Types.Select, options: ['Collection','Dataset','Event','Image','InteractiveResource','Model','PhysicalObject','Service','Software','Sound','Text15','Workflow','Other']},
 	versionMajor: { type: Types.Number, default: 1 },
-	versionMinor: { type: Types.Number, default: 0 }
+	versionMinor: { type: Types.Number, default: 0 },
+	// Azure File
+	file: { type: Types.File, storage: storage, initial: true }
 });
 
 Document.schema.virtual('version').get(function() {
