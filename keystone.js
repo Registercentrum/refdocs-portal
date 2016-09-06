@@ -24,7 +24,9 @@ keystone.init({
 	'session': true,
 	'session store': 'mongo',
 	'auth': true,
-	'user model': 'User'
+	'user model': 'User',
+
+	'data cite prefix': process.env.DATA_CITE_PREFIX
 
 });
 
