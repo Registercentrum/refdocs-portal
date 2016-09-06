@@ -91,5 +91,12 @@ Document.schema.virtual('resourceType').get(function(){
 	return this.freeTextResourceType ? this.resourceTypeFreeText : this.resourceTypeExamples;
 });
 
+Document.schema.virtual('subjectArray').get(function(){
+	var subjects = this.subjects || '';
+	return subjects.split(';').map(function(s) {
+		return s.trim();
+	});
+});
+
 Document.defaultColumns = 'title, creators';
 Document.register();
