@@ -3,6 +3,7 @@ var Types = keystone.Field.Types;
 var shortid = require('shortid');
 var langs = require('iso-639-1');
 var azure = require('keystone-storage-adapter-azure');
+var prefix = keystone.get('data cite prefix');
 /**
  * Document Model
  * ==========
@@ -14,17 +15,28 @@ var azure = require('keystone-storage-adapter-azure');
 var storage = new keystone.Storage({
   adapter: azure,
   azure: {
-    // accountName: 'myaccount', // required; defaults to env.AZURE_STORAGE_ACCOUNT
-    // accountKey: 'secret', // required; defaults to env.AZURE_STORAGE_ACCESS_KEY
-    // container: 'mycontainer', // required; defaults to env.AZURE_STORAGE_CONTAINER
     generateFilename: keystone.Storage.randomFilename, // default
   },
   schema: {
-    container: true, // optional; store the referenced container in the database
-    etag: true, // optional; store the etag for the resource
-    url: true, // optional; generate & store a public URL
-  },
+    container: true,
+    etag: true,
+    url: true
+  }
 });
+
+var titleNames = [
+	{ field: 'translatedTitle', name: 'TranslatedTitle' },
+	{ field: 'alternativeTitle', name: 'AlternativeTitle' },
+	{ field: 'subtitle', name: 'Subtitle' }
+];
+
+var dateNames = [
+	{ field: 'dateAccepted', name: 'Accepted' },
+	{ field: 'dateAvailable', name: 'Available' },
+	{ field: 'dateCreated', name: 'Created' },
+	{ field: 'dateIssued', name: 'Issued' },
+	{ field: 'dateSubmitted', name: 'Submitted' }
+];
 
 function getLanguangeSelections(){
 	return langs.getLanguages(langs.getAllCodes()).map(
@@ -43,7 +55,7 @@ var Document = new keystone.List('Document', {
 });
 
 Document.add({
-	identifier: {
+	postfix: {
         type: String,
         'default': shortid.generate,
         index: true,
@@ -52,8 +64,8 @@ Document.add({
     },
 	identifierType: {
 		type: Types.Select,
-		options: [{value: 'doi', label: 'DOI'}],
-		default: 'doi',
+		options: ['DOI'], 
+		default: 'DOI',
 		emptyOption: false,
 		hidden: true
 	},
@@ -63,15 +75,15 @@ Document.add({
 	alternativeTitle: { type: String, collapse: true },
 	subtitle: { type: String, collapse: true },
 	publisher: { type: String },
-	publicationYear: { type: Types.Date, default: Date.now, required: true, index: true, initial: true, note: 'Only year is selected from date'},
-	subjects: { type: Types.Textarea, note: 'Separate your different subjects with semicolon. \n\nExample: `subject one;subject two`'},
+	publicationDate: { type: Types.Date, label: 'Publication Year', default: Date.now, format: 'YYYY', required: true, index: true, initial: true, note: 'Only year is selected from date'},
+	subjectString: { type: Types.Textarea, label: 'Subjects', note: 'Separate your different subjects with semicolon. \n\nExample: `subject one;subject two`'},
 	//Contributors
 	contributors: { type: Types.Relationship, ref: 'Contributor', many: true },
-	dateAccepted: { type: Types.Date, collapse: true },
-	dateAvailable: { type: Types.Date, collapse: true },
-	dateCreated: { type: Types.Date, collapse: true },
-	dateIssued: { type: Types.Date, collapse: true },
-	dateSubmitted: { type: Types.Date, collapse: true },
+	dateAccepted: { type: Types.Date, collapse: true, format: 'YYYY-MM-DD' },
+	dateAvailable: { type: Types.Date, collapse: true, format: 'YYYY-MM-DD' },
+	dateCreated: { type: Types.Date, collapse: true, format: 'YYYY-MM-DD' },
+	dateIssued: { type: Types.Date, collapse: true, format: 'YYYY-MM-DD' },
+	dateSubmitted: { type: Types.Date, collapse: true, format: 'YYYY-MM-DD' },
 	language: { type: Types.Select, options: getLanguangeSelections(), default: 'en' },
 	freeTextResourceType: { type: Boolean, required: false },
 	resourceTypeExamples: { type: Types.Select, label: 'Resource Type', options: ['Book', 'Book Chapter', 'Book Prospectus', 'Book Review', 'Book Series', 'Conference Abstract', 'Conference Paper', 'Conference Poster', 'Conference Program', 'Dictionary Entry', 'Disclosure', 'Dissertation', 'Edited Book', 'Encyclopedia Entry', 'Funding Submission', 'Journal Article', 'Journal Issue', 'License', 'Magazine Article', 'Manual', 'Newsletter Article', 'Newspaper Article', 'Online Resource', 'Patent', 'Registered Copyright', 'Report', 'Research Tool', 'Supervised Student Publication', 'Tenure-Promotion', 'Test', 'Trademark', 'Translation', 'University Academic Unit', 'Website', 'Working Paper'], dependsOn: { freeTextResourceType: false }}, 
@@ -91,12 +103,42 @@ Document.schema.virtual('resourceType').get(function(){
 	return this.freeTextResourceType ? this.resourceTypeFreeText : this.resourceTypeExamples;
 });
 
-Document.schema.virtual('subjectArray').get(function(){
-	var subjects = this.subjects || '';
-	return subjects.split(';').map(function(s) {
+Document.schema.virtual('subjects').get(function(){
+	return !this.subjectString ? [] : this.subjectString.split(';').map(function(s) {
 		return s.trim();
 	});
 });
+
+Document.schema.virtual('identifier').get(function(){
+	return prefix + '/' + this.postfix; 
+});
+
+Document.schema.virtual('publicationYear').get(function(){
+	return this._.publicationDate.format(); 
+});
+
+Document.schema.virtual('titles').get(function(){
+	var doc = this;
+	return titleNames
+		.map(function(t){
+			return { value: doc.get(t.field), type: t.name };
+		})
+		.filter(function(t){
+			return !!t.value
+		});
+});
+
+Document.schema.virtual('dates').get(function(){
+	var doc = this;
+	return dateNames
+		.map(function(d){
+			var currDate = doc._[d.field];
+			return { value: currDate && currDate.format(), type: d.name };
+		})
+		.filter(function(d){
+			return !!d.value;
+		});
+})
 
 Document.defaultColumns = 'title, creators';
 Document.register();
