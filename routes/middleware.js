@@ -9,6 +9,7 @@
  */
 
 var _ = require('underscore');
+var keystone = require('keystone');
 
 
 /**
@@ -25,10 +26,11 @@ exports.initLocals = function(req, res, next) {
 	
 	locals.navLinks = [
 		{ label: 'Home',		key: 'home',		href: '/' },
-		{ label: 'Blog',		key: 'blog',		href: '/blog' },
+		{ label: 'Documents',		key: 'documents',		href: '/documents' },
 		{ label: 'Contact',		key: 'contact',		href: '/contact' }
 	];
-	
+
+	locals.prefix = keystone.get('data cite prefix');
 	locals.user = req.user;
 	
 	next();

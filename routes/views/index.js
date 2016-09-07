@@ -9,6 +9,17 @@ exports = module.exports = function(req, res) {
 	// item in the header navigation.
 	locals.section = 'home';
 	
+	locals.data = {};
+
+	view.on('init', function(next){
+		keystone.list('Document').model
+			.count(function(err, count){
+				if(!err){
+					locals.data.nDocuments = count;
+				}
+				next(err);
+			});
+	});
 	// Render the view
 	view.render('index');
 	
