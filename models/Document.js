@@ -53,7 +53,8 @@ function getLanguangeSelections(){
 }
 
 var Document = new keystone.List('Document', {
-	map: { name: 'title' }
+	map: { name: 'title' },
+	track: true
 });
 
 Document.add({
@@ -140,7 +141,7 @@ Document.schema.virtual('dates').get(function(){
 		.filter(function(d){
 			return !!d.value;
 		});
-})
+});
 
 Document.defaultColumns = 'title, creators';
 Document.register();
