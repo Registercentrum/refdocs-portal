@@ -15,7 +15,9 @@ var prefix = keystone.get('data cite prefix');
 var storage = new keystone.Storage({
   adapter: azure,
   azure: {
-    generateFilename: keystone.Storage.randomFilename, // default
+	  generateFilename: function (file) {
+		  return prefix + '/' + shortid.generate() + '.' + file.extension;
+	  } 
   },
   schema: {
     container: true,
