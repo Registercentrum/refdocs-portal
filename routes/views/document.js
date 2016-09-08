@@ -38,8 +38,8 @@ function mapJsonToXML(json) {
 			{
 				_attr: {
 					'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-					xmlns: 'http://datacite.org/schema/kernel-4',
-					'xsi:schemaLocation': 'http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4/metadata.xsd'
+					xmlns: 'http://schema.labs.datacite.org/meta/kernel-4.0/',
+					'xsi:schemaLocation': 'http://schema.labs.datacite.org/meta/kernel-4.0/metadata.xsd'
 				}
 			},
 			{ identifier: [{ _attr: { identifierType: json.identifierType } }, json.identifier] },
@@ -82,7 +82,7 @@ exports = module.exports = function (req, res) {
 			res.send(err);
 		} else {
 			res.type('xml');
-			res.send(xml(mapJsonToXML(result), true));
+			res.send(xml(mapJsonToXML(result), { declaration: true, indent: true }));
 		}
 	});
 };
