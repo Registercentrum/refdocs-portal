@@ -87,11 +87,11 @@ Document.add({
 	dateCreated: { type: Types.Date, collapse: true, format: 'YYYY-MM-DD' },
 	dateIssued: { type: Types.Date, collapse: true, format: 'YYYY-MM-DD' },
 	dateSubmitted: { type: Types.Date, collapse: true, format: 'YYYY-MM-DD' },
-	language: { type: Types.Select, options: getLanguangeSelections(), default: 'en' },
-	freeTextResourceType: { type: Boolean, required: false },
-	resourceTypeExamples: { type: Types.Select, label: 'Resource Type', options: ['Book', 'Book Chapter', 'Book Prospectus', 'Book Review', 'Book Series', 'Conference Abstract', 'Conference Paper', 'Conference Poster', 'Conference Program', 'Dictionary Entry', 'Disclosure', 'Dissertation', 'Edited Book', 'Encyclopedia Entry', 'Funding Submission', 'Journal Article', 'Journal Issue', 'License', 'Magazine Article', 'Manual', 'Newsletter Article', 'Newspaper Article', 'Online Resource', 'Patent', 'Registered Copyright', 'Report', 'Research Tool', 'Supervised Student Publication', 'Tenure-Promotion', 'Test', 'Trademark', 'Translation', 'University Academic Unit', 'Website', 'Working Paper'], dependsOn: { freeTextResourceType: false }}, 
-	resourceTypeFreeText: { type: String, label: 'Resource Type', dependsOn: { freeTextResourceType: true }},
-	resourceTypeGeneral: { type: Types.Select, options: ['Collection','Dataset','Event','Image','InteractiveResource','Model','PhysicalObject','Service','Software','Sound','Text','Workflow','Other']},
+	language: { type: Types.Select, options: getLanguangeSelections(), default: 'en', emptyOption: false },
+	predefinedResourceType: { label: 'Select from a list of predifined resource types', type: Boolean, initial: true, default: true },
+	resourceTypeExamples: { type: Types.Select, label: 'Resource Type', emptyOption: false, initial: true, required: true, options: ['Book', 'Book Chapter', 'Book Prospectus', 'Book Review', 'Book Series', 'Conference Abstract', 'Conference Paper', 'Conference Poster', 'Conference Program', 'Dictionary Entry', 'Disclosure', 'Dissertation', 'Edited Book', 'Encyclopedia Entry', 'Funding Submission', 'Journal Article', 'Journal Issue', 'License', 'Magazine Article', 'Manual', 'Newsletter Article', 'Newspaper Article', 'Online Resource', 'Patent', 'Registered Copyright', 'Report', 'Research Tool', 'Supervised Student Publication', 'Tenure-Promotion', 'Test', 'Trademark', 'Translation', 'University Academic Unit', 'Website', 'Working Paper'], dependsOn: { predefinedResourceType: true }}, 
+	resourceTypeFreeText: { type: String, label: 'Resource Type', initial: true, required: true, dependsOn: { predefinedResourceType: false }},
+	resourceTypeGeneral: { type: Types.Select, initial: true, required: true, emptyOption: false, options: ['Collection','Dataset','Event','Image','InteractiveResource','Model','PhysicalObject','Service','Software','Sound','Text','Workflow','Other']},
 	versionMajor: { type: Types.Number, default: 1 },
 	versionMinor: { type: Types.Number, default: 0 },
 	// Azure File
@@ -103,7 +103,7 @@ Document.schema.virtual('version').get(function() {
 });
 
 Document.schema.virtual('resourceType').get(function(){
-	return this.freeTextResourceType ? this.resourceTypeFreeText : this.resourceTypeExamples;
+	return this.predefinedResourceType ? this.resourceTypeExamples : this.resourceTypeFreeText;
 });
 
 Document.schema.virtual('subjects').get(function(){
