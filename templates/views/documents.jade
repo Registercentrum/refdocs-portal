@@ -2,7 +2,7 @@ extends ../layouts/default
 
 block intro
 	.container
-		h1 Documents
+		h1 Documents (#{data.documents.length})
 		
 block content
 	.container: .row: .col-sm-12
@@ -12,18 +12,24 @@ block content
 				th Identifier
 				th Publication year
 				th Created at
-				th File URL
-				th XML
+				th.text-center File URL
+				th.text-center XML
+				if user && user.canAccessKeystone
+					th.text-center Upload to DC
 			each doc in data.documents
 				tr
 					td= doc.title
 					td= doc.identifier
 					td= doc.publicationYear
 					td= doc._.createdAt.format('MMMM Do, YYYY')
-					td
+					td.text-center
 						if doc.file.url 
 							a(href='/#{doc.identifier}'): span.glyphicon.glyphicon-download-alt
 						else
 							span.glyphicon.glyphicon-remove
-					td
+					td.text-center
 						a(href='/xml/#{doc.identifier}'): span.glyphicon.glyphicon-download-alt
+
+					if user && user.canAccessKeystone
+						td.text-center
+							a(href='/upload/#{doc.identifier}'): span.glyphicon.glyphicon-cloud-upload
