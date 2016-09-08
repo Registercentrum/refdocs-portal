@@ -22,7 +22,7 @@ block content
 					td= doc._.createdAt.format('MMMM Do, YYYY')
 					td
 						if doc.file.url 
-							a(href=doc.file.url): span.glyphicon.glyphicon-download-alt
+							a(href='/#{doc.identifier}'): span.glyphicon.glyphicon-download-alt
 						else
 							span.glyphicon.glyphicon-remove
 					td
