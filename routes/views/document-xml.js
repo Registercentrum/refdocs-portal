@@ -7,15 +7,19 @@ function formatSubject(subject) {
 	};
 }
 
+function formatAffiliation(affiliation){
+	return { affiliation: affiliation };
+}
+
 function formatCreator(creator) {
 	return {
-		creator: [{ creatorName: creator.creatorName }, { affiliation: creator.affiliation }]
+		creator: [{ creatorName: creator.creatorName }].concat(creator.affiliations.map(formatAffiliation))
 	};
 }
 
 function formatContributor(contributor) {
 	return {
-		contributor: [{ _attr: { contributorType: contributor.contributorType } }, { contributorName: contributor.contributorName }, { affiliation: contributor.affiliation }]
+		contributor: [{ _attr: { contributorType: contributor.contributorType } }, { contributorName: contributor.contributorName }].concat(contributor.affiliations.map(formatAffiliation))
 	};
 }
 
