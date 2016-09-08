@@ -26,7 +26,10 @@ keystone.init({
 	'auth': true,
 	'user model': 'User',
 
-	'data cite prefix': process.env.DATA_CITE_PREFIX
+	'data cite prefix': process.env.DATA_CITE_PREFIX,
+	'data cite user': process.env.DATA_CITE_USER,
+	'data cite password': process.env.DATA_CITE_PASSWORD,
+	'data cite test mode': process.env.DATA_CITE_TEST_MODE !== 'false'
 
 });
 

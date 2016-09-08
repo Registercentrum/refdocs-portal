@@ -15,7 +15,8 @@ block content
 				th.text-center File URL
 				th.text-center XML
 				if user && user.canAccessKeystone
-					th.text-center Upload to DC
+					th.text-center Upload DOI 
+					th.text-center Upload metadata
 			each doc in data.documents
 				tr
 					td= doc.title
@@ -32,4 +33,6 @@ block content
 
 					if user && user.canAccessKeystone
 						td.text-center
-							a(href='/upload/#{doc.identifier}'): span.glyphicon.glyphicon-cloud-upload
+							a(href='/upload/doi/#{doc.identifier}'): span.glyphicon.glyphicon-cloud-upload
+						td.text-center
+							a(href='/upload/metadata/#{doc.identifier}'): span.glyphicon.glyphicon-cloud-upload
