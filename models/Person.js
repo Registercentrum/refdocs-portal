@@ -15,9 +15,18 @@ var Person = new keystone.List('Person');
 Person.add({
 	familyName: { type: String, required: true, initial: true },
 	givenName: { type: String, required: false, initial: true },
-	affiliation: { type: Types.Textarea },
+	affiliation: { type: Types.Textarea, note: 'If you want to input multiple affiliations, '+
+		'separate your different affiliations with semicolon. \n\nExample: `affiliation one;affiliation two`' },
 });
 
+
+Person.schema.virtual('affiliations').get(function() {
+	return !this.affiliation ? [] : this.affiliation.split(';').map(function(a) {
+		return a.trim();
+	}).filter(function(a){
+		return !!a;
+	});
+})
 
 Person.defaultColumns = 'familyName, givenName, affiliation';
 Person.register();
