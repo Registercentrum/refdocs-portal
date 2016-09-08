@@ -91,7 +91,7 @@ Document.add({
 	freeTextResourceType: { type: Boolean, required: false },
 	resourceTypeExamples: { type: Types.Select, label: 'Resource Type', options: ['Book', 'Book Chapter', 'Book Prospectus', 'Book Review', 'Book Series', 'Conference Abstract', 'Conference Paper', 'Conference Poster', 'Conference Program', 'Dictionary Entry', 'Disclosure', 'Dissertation', 'Edited Book', 'Encyclopedia Entry', 'Funding Submission', 'Journal Article', 'Journal Issue', 'License', 'Magazine Article', 'Manual', 'Newsletter Article', 'Newspaper Article', 'Online Resource', 'Patent', 'Registered Copyright', 'Report', 'Research Tool', 'Supervised Student Publication', 'Tenure-Promotion', 'Test', 'Trademark', 'Translation', 'University Academic Unit', 'Website', 'Working Paper'], dependsOn: { freeTextResourceType: false }}, 
 	resourceTypeFreeText: { type: String, label: 'Resource Type', dependsOn: { freeTextResourceType: true }},
-	resourceTypeGeneral: { type: Types.Select, options: ['Collection','Dataset','Event','Image','InteractiveResource','Model','PhysicalObject','Service','Software','Sound','Text15','Workflow','Other']},
+	resourceTypeGeneral: { type: Types.Select, options: ['Collection','Dataset','Event','Image','InteractiveResource','Model','PhysicalObject','Service','Software','Sound','Text','Workflow','Other']},
 	versionMajor: { type: Types.Number, default: 1 },
 	versionMinor: { type: Types.Number, default: 0 },
 	// Azure File
