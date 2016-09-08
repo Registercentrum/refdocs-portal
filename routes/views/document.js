@@ -38,8 +38,8 @@ function mapJsonToXML(json) {
 			{
 				_attr: {
 					'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-					xmlns: 'http://schema.labs.datacite.org/meta/kernel-4.0/',
-					'xsi:schemaLocation': 'http://schema.labs.datacite.org/meta/kernel-4.0/metadata.xsd'
+					xmlns: 'http://datacite.org/schema/kernel-3',
+					'xsi:schemaLocation': 'http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd'
 				}
 			},
 			{ identifier: [{ _attr: { identifierType: json.identifierType } }, json.identifier] },
