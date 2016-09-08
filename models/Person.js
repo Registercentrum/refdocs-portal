@@ -2,7 +2,7 @@ var keystone = require('keystone');
 var Types = keystone.Field.Types;
 
 function getFullName(person){
-	return person.familyName + ', ' + person.givenName;	
+	return person.givenName ? (person.familyName + ', ' + person.givenName) : person.familyName;	
 }
 
 /**
@@ -14,7 +14,7 @@ var Person = new keystone.List('Person');
 
 Person.add({
 	familyName: { type: String, required: true, initial: true },
-	givenName: { type: String, required: true, initial: true },
+	givenName: { type: String, required: false, initial: true },
 	affiliation: { type: Types.Textarea },
 });
 
