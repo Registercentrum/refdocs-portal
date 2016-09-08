@@ -26,6 +26,8 @@ var storage = new keystone.Storage({
   }
 });
 
+var currYear = (new Date()).getUTCFullYear();
+
 var titleNames = [
 	{ field: 'translatedTitle', name: 'TranslatedTitle' },
 	{ field: 'alternativeTitle', name: 'AlternativeTitle' },
@@ -78,7 +80,7 @@ Document.add({
 	alternativeTitle: { type: String, collapse: true },
 	subtitle: { type: String, collapse: true },
 	publisher: { type: String, required: true, initial: true },
-	publicationDate: { type: Types.Date, label: 'Publication Year', default: Date.now, format: 'YYYY', required: true, index: true, initial: true, note: 'Only year is selected from date'},
+	publicationYear: { type: Number, index: true, max: currYear + 1, min: 1900, initial: true, required: true, default: currYear },
 	subjectString: { type: Types.Textarea, label: 'Subjects', note: 'Separate your different subjects with semicolon. \n\nExample: `subject one;subject two`'},
 	//Contributors
 	contributors: { type: Types.Relationship, ref: 'Contributor', many: true },
@@ -95,6 +97,7 @@ Document.add({
 	versionMajor: { type: Types.Number, default: 1 },
 	versionMinor: { type: Types.Number, default: 0 },
 	// Azure File
+	// Maybe should be required?
 	file: { type: Types.File, storage: storage, initial: true }
 });
 
@@ -114,10 +117,6 @@ Document.schema.virtual('subjects').get(function(){
 
 Document.schema.virtual('identifier').get(function(){
 	return prefix + '/' + this.postfix; 
-});
-
-Document.schema.virtual('publicationYear').get(function(){
-	return this._.publicationDate.format(); 
 });
 
 Document.schema.virtual('titles').get(function(){
