@@ -67,7 +67,7 @@ Document.add({
     },
 	identifierType: {
 		type: Types.Select,
-		options: ['DOI'], 
+		options: 'DOI', 
 		default: 'DOI',
 		emptyOption: false,
 		hidden: true
@@ -77,7 +77,7 @@ Document.add({
 	translatedTitle: { type: String, collapse: true },
 	alternativeTitle: { type: String, collapse: true },
 	subtitle: { type: String, collapse: true },
-	publisher: { type: String },
+	publisher: { type: String, required: true, initial: true },
 	publicationDate: { type: Types.Date, label: 'Publication Year', default: Date.now, format: 'YYYY', required: true, index: true, initial: true, note: 'Only year is selected from date'},
 	subjectString: { type: Types.Textarea, label: 'Subjects', note: 'Separate your different subjects with semicolon. \n\nExample: `subject one;subject two`'},
 	//Contributors
