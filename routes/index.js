@@ -41,10 +41,14 @@ exports = module.exports = function(app) {
 	app.get('/blog/post/:post', routes.views.post);
 	app.all('/contact', routes.views.contact);
 	
+	app.all('/upload/*', middleware.requireUser);
 	if(prefix){
 		app.get('/xml/' + prefix + '/:document', routes.views['document-xml']);
 		app.get('/' + prefix + '/:document', routes.views['file-redirect']);
+		app.get('/upload/metadata/' + prefix + '/:document', routes.views.upload);
+		app.get('/upload/doi/' + prefix + '/:document', routes.views.upload);
 	}
+
 	// NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
 	// app.get('/protected', middleware.requireUser, routes.views.protected);
 	

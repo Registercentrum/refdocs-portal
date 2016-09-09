@@ -1,68 +1,5 @@
 var keystone = require('keystone');
-var xml = require('xml');
-
-function formatSubject(subject) {
-	return {
-		subject: subject
-	};
-}
-
-function formatAffiliation(affiliation){
-	return { affiliation: affiliation };
-}
-
-function formatCreator(creator) {
-	return {
-		creator: [{ creatorName: creator.creatorName }].concat(creator.affiliations.map(formatAffiliation))
-	};
-}
-
-function formatContributor(contributor) {
-	return {
-		contributor: [{ _attr: { contributorType: contributor.contributorType } }, { contributorName: contributor.contributorName }].concat(contributor.affiliations.map(formatAffiliation))
-	};
-}
-
-function formatDate(date) {
-	return {
-		date: [{ _attr: { dateType: date.type } }, date.value]
-	};
-}
-
-function formatTitle(title) {
-	return {
-		title: [{ _attr: { titleType: title.type } }, title.value]
-	};
-}
-
-function mapJsonToXML(json) {
-	return {
-		resource:
-		[
-			{
-				_attr: {
-					'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-					xmlns: 'http://datacite.org/schema/kernel-3',
-					'xsi:schemaLocation': 'http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd'
-				}
-			},
-			{ identifier: [{ _attr: { identifierType: json.identifierType } }, json.identifier] },
-			{ creators: json.creators.map(formatCreator) },
-			{ titles: [{ title: json.title }].concat(json.titles.map(formatTitle)) },
-			{ publisher: json.publisher },
-			{ publicationYear: json.publicationYear },
-			{ subjects: json.subjects.map(formatSubject) },
-			{ contributors: json.contributors.map(formatContributor) },
-			{ dates: json.dates.map(formatDate) },
-			{ language: json.language },
-			{ resourceType: [{ _attr: { resourceTypeGeneral: json.resourceTypeGeneral } }, json.resourceType] },
-			{ sizes: [{ size: json.file.size + ' byte' }] },
-			{ formats: [{ format: json.file.mimetype }] },
-			{ version: json.version }
-		]
-	}
-}
-
+var documentToXml = require('../../util/documentToXML');
 exports = module.exports = function (req, res) {
 
 	var locals = res.locals;
@@ -86,7 +23,7 @@ exports = module.exports = function (req, res) {
 			res.send(err);
 		} else {
 			res.type('xml');
-			res.send(xml(mapJsonToXML(result), { declaration: true, indent: true }));
+			res.send(documentToXml(result));
 		}
 	});
 };

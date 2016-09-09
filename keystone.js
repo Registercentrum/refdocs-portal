@@ -1,7 +1,7 @@
 // Simulate config options from your production environment by
 // customising the .env file in your project's root folder.
 require('dotenv').load();
-
+var pkg = require('./package.json');
 // Require keystone
 var keystone = require('keystone');
 
@@ -26,8 +26,12 @@ keystone.init({
 	'auth': true,
 	'user model': 'User',
 
-	'data cite prefix': process.env.DATA_CITE_PREFIX
+	'data cite prefix': process.env.DATA_CITE_PREFIX,
+	'data cite user': process.env.DATA_CITE_USER,
+	'data cite password': process.env.DATA_CITE_PASSWORD,
+	'data cite test mode': process.env.DATA_CITE_TEST_MODE !== 'false',
 
+	'version': pkg.version
 });
 
 // Load your project's Models
