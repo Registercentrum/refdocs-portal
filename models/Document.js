@@ -142,5 +142,6 @@ Document.schema.virtual('dates').get(function(){
 		});
 });
 
-Document.defaultColumns = 'title, creators';
+Document.defaultColumns = 'title, creators, publicationYear, createdAt';
+Document.defaultSort = '-createdAt';
 Document.register();
