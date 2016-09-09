@@ -32,6 +32,7 @@ exports.initLocals = function(req, res, next) {
 
 	locals.prefix = keystone.get('data cite prefix');
 	locals.user = req.user;
+	locals.versionNumber = keystone.get('version');
 	
 	next();
 	
