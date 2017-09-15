@@ -32,3 +32,6 @@ node_modules
 
 .vscode
 Procfile
+
+# IIS configuration
+web.config
